@@ -199,3 +199,7 @@ As Acados needs to compile the controller in the first run, which will take seve
 ## TODO
 - [ ] Additional implementation details
 - [ ] Dataset collection scripts
+
+
+# Acknowledgement
+We gratefully acknowledge the support of NVIDIA Corporation through the NVIDIA Academic Grant Program, including the provision of RTX 6000 Ada Generation GPUs used in this research.
