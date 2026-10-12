@@ -294,7 +294,6 @@ def obtain_valid_traj_param_simplified(fourier_config, robot_config, max_try = 1
         try_traj = try_traj + 1
 
     if valid_traj:
-        print(f'Trajectory number {try_traj}')
         return t, q, dq, ddq, params
     else:
         print(f'Reached max number of sampled trajectory {max_try}')

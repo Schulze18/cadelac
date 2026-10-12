@@ -125,6 +125,29 @@ The datasets used for training are available on [Hugging Face](https://huggingfa
 git clone https://huggingface.co/datasets/schulze18/cadelac cadelac/learning/datasets/
 ```
 
+### Collect Your Own Dataset
+The datasets are generated in MuJoCo, tracking random excitation trajectories with a joint-space LQR at 50 Hz. Each environment is the Panda with a box payload at the end-effector, with random mass (0-4 kg) and position (±0.3 m).
+
+To regenerate the 100 random environments plus the nominal one (about 45 minutes):
+```bash
+python -m cadelac.control.lqr_dataset_collection --n_envs 100 --runs_per_env 20 --nominal
+```
+The dataset is saved in `cadelac/learning/datasets/panda/` as `panda_mj_101_rand_envs_20_runs_50Hz_lqr_recreated.pkl`, so it sits next to the published `panda_mj_101_rand_envs_20_runs_50Hz_lqr.pkl` without replacing it. To train or evaluate on it, set `dataset_name` in `train_panda.py` to the new name. The script does not overwrite an existing file unless `--overwrite` is given, and `--out` selects another path.
+
+Other useful options:
+```bash
+# Quick test: the first 5 environments
+python -m cadelac.control.lqr_dataset_collection --env_ids 0-4 --runs_per_env 20
+
+# Only the nominal environment
+python -m cadelac.control.lqr_dataset_collection --env_ids "" --nominal --runs_per_env 20
+
+# Watch the MuJoCo simulation (real time)
+python -m cadelac.control.lqr_dataset_collection --env_ids 0 --runs_per_env 2 --viewer
+```
+> **Note:**  
+The payloads of all `--n_envs` environments are drawn first, and the random numbers of every run depend on the previous ones. With `--seed 0` and `--n_envs 100`, environments collected in order from 0 reproduce the published dataset up to numerical precision. Using other `--n_envs` or skipping environments gives different data. The payload parameters (`payload_mass`, `payload_pos`, `payload_com`, `payload_inertia`) are saved with every run.
+
 ## Training and Evaluation
 All scripts related to training the proposed models are located in the `learning` folder.  
 The training pipeline is adapted from [Deep Lagrangian Networks](https://github.com/milutter/deep_lagrangian_networks) and implemented in **PyTorch**.
@@ -194,11 +217,6 @@ python -m cadelac.ros.cadelac_node -c 2
 
 > **Note:**  
 As Acados needs to compile the controller in the first run, which will take several minutes for CaDeLaC, the safety flag [compilation_run](https://github.com/Schulze18/cadelac/blob/main/cadelac/ros/cadelac_node.py#L63) prevents the controller to be executed and holds the robot in place. Once the compilation is done, you can stop the script, set the flag to `False` and run again the script which will load the compiled controller. If you run a new controller for the first time, set the flag to `True` again.
-
----
-## TODO
-- [ ] Additional implementation details
-- [ ] Dataset collection scripts
 
 
 # Acknowledgement
