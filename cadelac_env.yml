@@ -1,8 +1,8 @@
 name: cadelac
 channels:
-- conda-forge
 - pytorch
 - nvidia
+- conda-forge
 - defaults
 dependencies:
 - python=3.11
@@ -24,3 +24,4 @@ dependencies:
   - ninja>=1.11
   - dill
   - PyQt5
+  - wandb
